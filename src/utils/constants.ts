@@ -66,5 +66,5 @@ export const STORAGE_KEYS = {
 // アプリ情報
 export const APP_INFO = {
   name: 'Dream Diary Assistant',
-  version: '1.2.0',
+  version: '1.2.1',
 } as const;
