@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Eye, EyeOff, Download, Upload, Trash2, ExternalLink } from 'lucide-react';
 import { useDreamStore } from '@/stores/dreamStore';
-import { OPENAI_MODELS, CLAUDE_MODELS, APP_INFO } from '@/utils/constants';
+import { OPENAI_MODELS, CLAUDE_MODELS, GEMINI_MODELS, APP_INFO } from '@/utils/constants';
 import * as storage from '@/services/storage';
 import type { TextApiProvider, ImageApiProvider, ThemeMode } from '@/types';
 
@@ -12,7 +12,11 @@ export const Settings = () => {
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
 
-  const models = settings.textApiProvider === 'openai' ? OPENAI_MODELS : CLAUDE_MODELS;
+  const models = settings.textApiProvider === 'openai'
+    ? OPENAI_MODELS
+    : settings.textApiProvider === 'anthropic'
+      ? CLAUDE_MODELS
+      : GEMINI_MODELS;
 
   const handleExport = async () => {
     try {
@@ -69,15 +73,21 @@ export const Settings = () => {
             value={settings.textApiProvider}
             onChange={(e) => {
               const provider = e.target.value as TextApiProvider;
+              const defaultModel = provider === 'openai'
+                ? 'gpt-4o-mini'
+                : provider === 'anthropic'
+                  ? 'claude-3-5-sonnet-20241022'
+                  : 'gemini-2.0-flash-exp';
               updateSettings({
                 textApiProvider: provider,
-                textModel: provider === 'openai' ? 'gpt-4o-mini' : 'claude-3-5-sonnet-20241022',
+                textModel: defaultModel,
               });
             }}
             className="w-full px-3 py-2 rounded-lg border border-light-text-sub/20 dark:border-dark-text-sub/20 bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text"
           >
             <option value="openai">OpenAI (GPT-4)</option>
             <option value="anthropic">Anthropic (Claude)</option>
+            <option value="gemini">Google (Gemini)</option>
           </select>
         </div>
 
@@ -124,7 +134,13 @@ export const Settings = () => {
             </button>
           </div>
           <a
-            href={settings.textApiProvider === 'openai' ? 'https://platform.openai.com/api-keys' : 'https://console.anthropic.com/'}
+            href={
+              settings.textApiProvider === 'openai'
+                ? 'https://platform.openai.com/api-keys'
+                : settings.textApiProvider === 'anthropic'
+                  ? 'https://console.anthropic.com/'
+                  : 'https://aistudio.google.com/apikey'
+            }
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-light-accent dark:text-dark-accent flex items-center gap-1 mt-1"

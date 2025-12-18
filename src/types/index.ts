@@ -24,7 +24,7 @@ export interface Dream {
 }
 
 // テキストAIプロバイダー
-export type TextApiProvider = 'openai' | 'anthropic';
+export type TextApiProvider = 'openai' | 'anthropic' | 'gemini';
 
 // 画像生成プロバイダー
 export type ImageApiProvider = 'openai' | 'stability';

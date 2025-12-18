@@ -3,6 +3,7 @@ import type { InterpretationResult, ImageGenerationResult } from '@/types';
 import { useDreamStore } from '@/stores/dreamStore';
 import { interpretDreamWithOpenAI } from '@/services/openai';
 import { interpretDreamWithClaude } from '@/services/anthropic';
+import { interpretDreamWithGemini } from '@/services/gemini';
 import { generateImage } from '@/services/imageGeneration';
 
 interface UseAIReturn {
@@ -40,8 +41,14 @@ export const useAI = (): UseAIReturn => {
             settings.textApiKey,
             settings.textModel
           );
-        } else {
+        } else if (settings.textApiProvider === 'anthropic') {
           result = await interpretDreamWithClaude(
+            content,
+            settings.textApiKey,
+            settings.textModel
+          );
+        } else {
+          result = await interpretDreamWithGemini(
             content,
             settings.textApiKey,
             settings.textModel

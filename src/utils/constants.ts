@@ -47,6 +47,13 @@ export const CLAUDE_MODELS = [
   { id: 'claude-3-5-haiku-20241022', name: 'Claude 3.5 Haiku' },
 ];
 
+// Geminiモデル一覧
+export const GEMINI_MODELS = [
+  { id: 'gemini-2.0-flash-exp', name: 'Gemini 2.0 Flash' },
+  { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro' },
+  { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash' },
+];
+
 // Storage keys
 export const STORAGE_KEYS = {
   DREAMS: 'dreams',
@@ -56,5 +63,5 @@ export const STORAGE_KEYS = {
 // アプリ情報
 export const APP_INFO = {
   name: 'Dream Diary Assistant',
-  version: '1.0.0',
+  version: '1.1.0',
 } as const;
