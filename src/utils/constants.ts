@@ -32,6 +32,7 @@ export const DEFAULT_SETTINGS: Settings = {
   imageApiProvider: 'gemini',
   imageApiKey: '',
   geminiImageModel: 'gemini-2.5-flash-image',
+  openaiImageModel: 'gpt-image-1.5',
   theme: 'system',
 };
 
@@ -64,6 +65,12 @@ export const GEMINI_IMAGE_MODELS = [
   { id: 'gemini-3-pro-image-preview', name: 'Gemini 3 Pro Image（高品質・4K対応）' },
 ];
 
+// OpenAI画像モデル一覧
+export const OPENAI_IMAGE_MODELS = [
+  { id: 'gpt-image-1.5', name: 'GPT-Image-1.5（最新・高品質）' },
+  { id: 'dall-e-3', name: 'DALL-E 3（標準）' },
+];
+
 // Storage keys
 export const STORAGE_KEYS = {
   DREAMS: 'dreams',
@@ -73,5 +80,5 @@ export const STORAGE_KEYS = {
 // アプリ情報
 export const APP_INFO = {
   name: 'Dream Diary Assistant',
-  version: '1.3.0',
+  version: '1.4.0',
 } as const;

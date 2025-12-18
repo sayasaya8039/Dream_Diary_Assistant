@@ -83,6 +83,7 @@ export const useAI = (): UseAIReturn => {
           provider: settings.imageApiProvider,
           apiKey: settings.imageApiKey,
           geminiImageModel: settings.geminiImageModel,
+          openaiImageModel: settings.openaiImageModel,
         });
         return result;
       } catch (error) {

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Eye, EyeOff, Download, Upload, Trash2, ExternalLink } from 'lucide-react';
 import { useDreamStore } from '@/stores/dreamStore';
-import { OPENAI_MODELS, CLAUDE_MODELS, GEMINI_MODELS, GEMINI_IMAGE_MODELS, APP_INFO } from '@/utils/constants';
+import { OPENAI_MODELS, CLAUDE_MODELS, GEMINI_MODELS, GEMINI_IMAGE_MODELS, OPENAI_IMAGE_MODELS, APP_INFO } from '@/utils/constants';
 import * as storage from '@/services/storage';
-import type { TextApiProvider, ImageApiProvider, ThemeMode, GeminiImageModel } from '@/types';
+import type { TextApiProvider, ImageApiProvider, ThemeMode, GeminiImageModel, OpenAIImageModel } from '@/types';
 
 export const Settings = () => {
   const { settings, updateSettings } = useDreamStore();
@@ -191,6 +191,29 @@ export const Settings = () => {
             </select>
             <p className="text-xs text-light-text-sub dark:text-dark-text-sub mt-1">
               ※ Pro版は高品質・4K対応ですが、料金が高くなります
+            </p>
+          </div>
+        )}
+
+        {/* OpenAI画像モデル選択 */}
+        {settings.imageApiProvider === 'openai' && (
+          <div>
+            <label className="block text-sm text-light-text-sub dark:text-dark-text-sub mb-1">
+              画像モデル
+            </label>
+            <select
+              value={settings.openaiImageModel}
+              onChange={(e) => updateSettings({ openaiImageModel: e.target.value as OpenAIImageModel })}
+              className="w-full px-3 py-2 rounded-lg border border-light-text-sub/20 dark:border-dark-text-sub/20 bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text"
+            >
+              {OPENAI_IMAGE_MODELS.map((model) => (
+                <option key={model.id} value={model.id}>
+                  {model.name}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-light-text-sub dark:text-dark-text-sub mt-1">
+              ※ GPT-Image-1.5はChatGPT Plus/Pro利用者向けの最新モデルです
             </p>
           </div>
         )}

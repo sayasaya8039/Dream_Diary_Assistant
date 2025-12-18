@@ -1,4 +1,4 @@
-import type { ImageGenerationResult, ImageApiProvider, GeminiImageModel } from '@/types';
+import type { ImageGenerationResult, ImageApiProvider, GeminiImageModel, OpenAIImageModel } from '@/types';
 import { generateImageWithDALLE } from './openai';
 
 const STABILITY_API_URL = 'https://api.stability.ai/v2beta';
@@ -120,6 +120,7 @@ export interface GenerateImageOptions {
   provider: ImageApiProvider;
   apiKey: string;
   geminiImageModel?: GeminiImageModel;
+  openaiImageModel?: OpenAIImageModel;
 }
 
 /**
@@ -128,11 +129,11 @@ export interface GenerateImageOptions {
 export const generateImage = async (
   options: GenerateImageOptions
 ): Promise<ImageGenerationResult> => {
-  const { prompt, provider, apiKey, geminiImageModel } = options;
+  const { prompt, provider, apiKey, geminiImageModel, openaiImageModel } = options;
 
   switch (provider) {
     case 'openai':
-      return generateImageWithDALLE(prompt, apiKey);
+      return generateImageWithDALLE(prompt, apiKey, openaiImageModel);
     case 'stability':
       return generateImageWithStability(prompt, apiKey);
     case 'gemini':

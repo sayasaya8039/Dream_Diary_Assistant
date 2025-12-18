@@ -1,4 +1,4 @@
-import type { InterpretationResult, ImageGenerationResult } from '@/types';
+import type { InterpretationResult, ImageGenerationResult, OpenAIImageModel } from '@/types';
 
 const OPENAI_API_URL = 'https://api.openai.com/v1';
 
@@ -50,31 +50,46 @@ export const interpretDreamWithOpenAI = async (
 };
 
 /**
- * DALL-E 3で画像生成
+ * OpenAI画像生成（DALL-E 3 / GPT-Image-1.5）
  */
 export const generateImageWithDALLE = async (
   prompt: string,
-  apiKey: string
+  apiKey: string,
+  model: OpenAIImageModel = 'dall-e-3'
 ): Promise<ImageGenerationResult> => {
+  const enhancedPrompt = `Dreamy, ethereal illustration: ${prompt}. Style: soft watercolor, pastel colors, magical atmosphere, surreal and peaceful.`;
+
+  // GPT-Image-1.5とDALL-E 3で設定を分ける
+  const requestBody: Record<string, unknown> = {
+    model,
+    prompt: enhancedPrompt,
+    n: 1,
+    response_format: 'b64_json',
+  };
+
+  // モデルごとの設定
+  if (model === 'gpt-image-1.5') {
+    // GPT-Image-1.5は高解像度対応
+    requestBody.size = '1536x1024';
+    requestBody.quality = 'high';
+  } else {
+    // DALL-E 3
+    requestBody.size = '1024x1024';
+    requestBody.quality = 'standard';
+  }
+
   const response = await fetch(`${OPENAI_API_URL}/images/generations`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${apiKey}`,
     },
-    body: JSON.stringify({
-      model: 'dall-e-3',
-      prompt: `Dreamy, ethereal illustration: ${prompt}. Style: soft watercolor, pastel colors, magical atmosphere, surreal and peaceful.`,
-      n: 1,
-      size: '1024x1024',
-      quality: 'standard',
-      response_format: 'b64_json',
-    }),
+    body: JSON.stringify(requestBody),
   });
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error?.message || 'DALL-E APIエラー');
+    throw new Error(error.error?.message || 'OpenAI画像生成APIエラー');
   }
 
   const data = await response.json();

@@ -32,6 +32,9 @@ export type ImageApiProvider = 'openai' | 'stability' | 'gemini';
 // Gemini画像モデル
 export type GeminiImageModel = 'gemini-2.5-flash-image' | 'gemini-3-pro-image-preview';
 
+// OpenAI画像モデル
+export type OpenAIImageModel = 'dall-e-3' | 'gpt-image-1.5';
+
 // テーマ設定
 export type ThemeMode = 'light' | 'dark' | 'system';
 
@@ -43,6 +46,7 @@ export interface Settings {
   imageApiProvider: ImageApiProvider;
   imageApiKey: string;
   geminiImageModel: GeminiImageModel;
+  openaiImageModel: OpenAIImageModel;
   theme: ThemeMode;
 }
 
