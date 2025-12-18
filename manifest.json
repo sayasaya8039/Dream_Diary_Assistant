@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Dream Diary Assistant",
   "description": "AIベースの夢日記アシスタント - 夢の解釈とイラスト生成",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "action": {
     "default_title": "Dream Diary Assistant"
   },

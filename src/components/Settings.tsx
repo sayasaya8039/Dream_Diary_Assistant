@@ -74,10 +74,10 @@ export const Settings = () => {
             onChange={(e) => {
               const provider = e.target.value as TextApiProvider;
               const defaultModel = provider === 'openai'
-                ? 'gpt-4o-mini'
+                ? 'gpt-4.1-mini'
                 : provider === 'anthropic'
-                  ? 'claude-3-5-sonnet-20241022'
-                  : 'gemini-2.0-flash-exp';
+                  ? 'claude-sonnet-4-5-20250514'
+                  : 'gemini-3-flash';
               updateSettings({
                 textApiProvider: provider,
                 textModel: defaultModel,
@@ -85,9 +85,9 @@ export const Settings = () => {
             }}
             className="w-full px-3 py-2 rounded-lg border border-light-text-sub/20 dark:border-dark-text-sub/20 bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text"
           >
-            <option value="openai">OpenAI (GPT-4)</option>
-            <option value="anthropic">Anthropic (Claude)</option>
-            <option value="gemini">Google (Gemini)</option>
+            <option value="openai">OpenAI (GPT-5.2/4.1)</option>
+            <option value="anthropic">Anthropic (Claude 4.5)</option>
+            <option value="gemini">Google (Gemini 3)</option>
           </select>
         </div>
 

@@ -8,7 +8,7 @@ const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta';
 export const interpretDreamWithGemini = async (
   dreamContent: string,
   apiKey: string,
-  model: string = 'gemini-2.0-flash-exp'
+  model: string = 'gemini-3-flash'
 ): Promise<InterpretationResult> => {
   const response = await fetch(
     `${GEMINI_API_URL}/models/${model}:generateContent?key=${apiKey}`,
