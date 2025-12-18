@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Dream Diary Assistant",
+  "description": "AIベースの夢日記アシスタント - 夢の解釈とイラスト生成",
+  "version": "1.0.0",
+  "action": {
+    "default_title": "Dream Diary Assistant"
+  },
+  "side_panel": {
+    "default_path": "src/sidepanel/index.html"
+  },
+  "permissions": [
+    "storage",
+    "sidePanel"
+  ],
+  "background": {
+    "service_worker": "src/background/index.ts",
+    "type": "module"
+  },
+  "host_permissions": [
+    "https://api.openai.com/*",
+    "https://api.anthropic.com/*",
+    "https://api.stability.ai/*"
+  ]
+}
