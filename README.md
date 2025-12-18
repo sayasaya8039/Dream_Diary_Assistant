@@ -8,7 +8,7 @@ AIベースの夢日記アシスタント Chrome拡張機能（サイドパネ�
 
 - **夢の記録**: 日付とタグを付けて夢を記録
 - **AI解釈**: OpenAI GPT-4 または Claude で夢を分析・解釈
-- **イラスト生成**: DALL-E 3 または Stability AI で夢のイラストを生成
+- **イラスト生成**: Gemini（推奨）、DALL-E 3、Stability AI で夢のイラストを生成
 - **タグ分類**: 楽しい/怖い/不思議/懐かしい/予知夢/悪夢/明晰夢 などでカテゴリ分け
 - **統計分析**: 月別の記録数、タグ分布、頻出キーワードをグラフ表示
 - **ダーク/ライトモード**: システム設定に連動またはマニュアル切り替え
@@ -48,8 +48,9 @@ AIベースの夢日記アシスタント Chrome拡張機能（サイドパネ�
 
 1. サイドパネルを開き、「設定」タブへ移動
 2. AI APIキーを設定
-   - **テキストAI**: OpenAI または Anthropic のAPIキーを入力
-   - **画像生成AI**: OpenAI (DALL-E) または Stability AI のAPIキーを入力
+   - **テキストAI**: OpenAI、Anthropic、または Google (Gemini) のAPIキーを入力
+   - **画像生成AI**: Google Gemini（推奨）、OpenAI (DALL-E)、Stability AI のAPIキーを入力
+   - **Gemini画像モデル**: gemini-2.5-flash-image（標準）または gemini-3-pro-image-preview（高品質・4K対応）
 3. テーマを選択（ライト/ダーク/システム）
 
 ### 夢の記録

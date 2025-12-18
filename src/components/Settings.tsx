@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Eye, EyeOff, Download, Upload, Trash2, ExternalLink } from 'lucide-react';
 import { useDreamStore } from '@/stores/dreamStore';
-import { OPENAI_MODELS, CLAUDE_MODELS, GEMINI_MODELS, APP_INFO } from '@/utils/constants';
+import { OPENAI_MODELS, CLAUDE_MODELS, GEMINI_MODELS, GEMINI_IMAGE_MODELS, APP_INFO } from '@/utils/constants';
 import * as storage from '@/services/storage';
-import type { TextApiProvider, ImageApiProvider, ThemeMode } from '@/types';
+import type { TextApiProvider, ImageApiProvider, ThemeMode, GeminiImageModel } from '@/types';
 
 export const Settings = () => {
   const { settings, updateSettings } = useDreamStore();
@@ -166,10 +166,34 @@ export const Settings = () => {
             onChange={(e) => updateSettings({ imageApiProvider: e.target.value as ImageApiProvider })}
             className="w-full px-3 py-2 rounded-lg border border-light-text-sub/20 dark:border-dark-text-sub/20 bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text"
           >
+            <option value="gemini">Google Gemini（推奨）</option>
             <option value="openai">OpenAI (DALL-E 3)</option>
             <option value="stability">Stability AI</option>
           </select>
         </div>
+
+        {/* Gemini画像モデル選択 */}
+        {settings.imageApiProvider === 'gemini' && (
+          <div>
+            <label className="block text-sm text-light-text-sub dark:text-dark-text-sub mb-1">
+              画像モデル
+            </label>
+            <select
+              value={settings.geminiImageModel}
+              onChange={(e) => updateSettings({ geminiImageModel: e.target.value as GeminiImageModel })}
+              className="w-full px-3 py-2 rounded-lg border border-light-text-sub/20 dark:border-dark-text-sub/20 bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text"
+            >
+              {GEMINI_IMAGE_MODELS.map((model) => (
+                <option key={model.id} value={model.id}>
+                  {model.name}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-light-text-sub dark:text-dark-text-sub mt-1">
+              ※ Pro版は高品質・4K対応ですが、料金が高くなります
+            </p>
+          </div>
+        )}
 
         {/* 画像APIキー */}
         <div>
@@ -181,7 +205,7 @@ export const Settings = () => {
               type={showImageApiKey ? 'text' : 'password'}
               value={settings.imageApiKey}
               onChange={(e) => updateSettings({ imageApiKey: e.target.value })}
-              placeholder="sk-..."
+              placeholder={settings.imageApiProvider === 'gemini' ? 'AIza...' : 'sk-...'}
               className="w-full px-3 py-2 pr-10 rounded-lg border border-light-text-sub/20 dark:border-dark-text-sub/20 bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text"
             />
             <button
@@ -195,9 +219,20 @@ export const Settings = () => {
               )}
             </button>
           </div>
-          <p className="text-xs text-light-text-sub dark:text-dark-text-sub mt-1">
-            ※ OpenAI選択時はテキストAIと同じキーを使用できます
-          </p>
+          <a
+            href={
+              settings.imageApiProvider === 'gemini'
+                ? 'https://aistudio.google.com/apikey'
+                : settings.imageApiProvider === 'openai'
+                  ? 'https://platform.openai.com/api-keys'
+                  : 'https://platform.stability.ai/'
+            }
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-light-accent dark:text-dark-accent flex items-center gap-1 mt-1"
+          >
+            APIキーを取得 <ExternalLink className="w-3 h-3" />
+          </a>
         </div>
       </section>
 

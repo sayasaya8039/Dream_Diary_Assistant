@@ -78,11 +78,12 @@ export const useAI = (): UseAIReturn => {
       setImageError(null);
 
       try {
-        const result = await generateImage(
+        const result = await generateImage({
           prompt,
-          settings.imageApiProvider,
-          settings.imageApiKey
-        );
+          provider: settings.imageApiProvider,
+          apiKey: settings.imageApiKey,
+          geminiImageModel: settings.geminiImageModel,
+        });
         return result;
       } catch (error) {
         const message = error instanceof Error ? error.message : '画像生成に失敗しました';

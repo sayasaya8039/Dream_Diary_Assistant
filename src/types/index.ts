@@ -27,7 +27,10 @@ export interface Dream {
 export type TextApiProvider = 'openai' | 'anthropic' | 'gemini';
 
 // 画像生成プロバイダー
-export type ImageApiProvider = 'openai' | 'stability';
+export type ImageApiProvider = 'openai' | 'stability' | 'gemini';
+
+// Gemini画像モデル
+export type GeminiImageModel = 'gemini-2.5-flash-image' | 'gemini-3-pro-image-preview';
 
 // テーマ設定
 export type ThemeMode = 'light' | 'dark' | 'system';
@@ -39,6 +42,7 @@ export interface Settings {
   textModel: string;
   imageApiProvider: ImageApiProvider;
   imageApiKey: string;
+  geminiImageModel: GeminiImageModel;
   theme: ThemeMode;
 }
 

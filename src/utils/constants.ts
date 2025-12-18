@@ -29,8 +29,9 @@ export const DEFAULT_SETTINGS: Settings = {
   textApiProvider: 'openai',
   textApiKey: '',
   textModel: 'gpt-4.1-mini',
-  imageApiProvider: 'openai',
+  imageApiProvider: 'gemini',
   imageApiKey: '',
+  geminiImageModel: 'gemini-2.5-flash-image',
   theme: 'system',
 };
 
@@ -50,11 +51,17 @@ export const CLAUDE_MODELS = [
   { id: 'claude-haiku-4-5-20251015', name: 'Claude Haiku 4.5' },
 ];
 
-// Geminiモデル一覧
+// Geminiモデル一覧（テキスト）
 export const GEMINI_MODELS = [
   { id: 'gemini-3-flash', name: 'Gemini 3 Flash' },
   { id: 'gemini-3-pro', name: 'Gemini 3 Pro' },
   { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' },
+];
+
+// Gemini画像モデル一覧
+export const GEMINI_IMAGE_MODELS = [
+  { id: 'gemini-2.5-flash-image', name: 'Gemini 2.5 Flash Image（標準）' },
+  { id: 'gemini-3-pro-image-preview', name: 'Gemini 3 Pro Image（高品質・4K対応）' },
 ];
 
 // Storage keys
@@ -66,5 +73,5 @@ export const STORAGE_KEYS = {
 // アプリ情報
 export const APP_INFO = {
   name: 'Dream Diary Assistant',
-  version: '1.2.1',
+  version: '1.3.0',
 } as const;
