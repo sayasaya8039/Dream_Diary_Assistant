@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { Eye, EyeOff, Download, Upload, Trash2, ExternalLink } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Eye, EyeOff, Download, Upload, Trash2, ExternalLink, Save, Check } from 'lucide-react';
 import { useDreamStore } from '@/stores/dreamStore';
 import { OPENAI_MODELS, CLAUDE_MODELS, GEMINI_MODELS, GEMINI_IMAGE_MODELS, OPENAI_IMAGE_MODELS, APP_INFO } from '@/utils/constants';
 import * as storage from '@/services/storage';
-import type { TextApiProvider, ImageApiProvider, ThemeMode, GeminiImageModel, OpenAIImageModel } from '@/types';
+import type { Settings as SettingsType, TextApiProvider, ImageApiProvider, ThemeMode, GeminiImageModel, OpenAIImageModel } from '@/types';
 
 export const Settings = () => {
   const { settings, updateSettings } = useDreamStore();
@@ -11,10 +11,36 @@ export const Settings = () => {
   const [showImageApiKey, setShowImageApiKey] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
-  const models = settings.textApiProvider === 'openai'
+  // 編集用のローカル設定状態
+  const [localSettings, setLocalSettings] = useState<SettingsType>(settings);
+
+  // settingsが更新されたらlocalSettingsも更新
+  useEffect(() => {
+    setLocalSettings(settings);
+    setHasChanges(false);
+  }, [settings]);
+
+  // ローカル設定を更新（保存はしない）
+  const updateLocalSettings = (partial: Partial<SettingsType>) => {
+    setLocalSettings(prev => ({ ...prev, ...partial }));
+    setHasChanges(true);
+    setSaveSuccess(false);
+  };
+
+  // 設定を保存
+  const handleSave = async () => {
+    await updateSettings(localSettings);
+    setHasChanges(false);
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 3000);
+  };
+
+  const models = localSettings.textApiProvider === 'openai'
     ? OPENAI_MODELS
-    : settings.textApiProvider === 'anthropic'
+    : localSettings.textApiProvider === 'anthropic'
       ? CLAUDE_MODELS
       : GEMINI_MODELS;
 
@@ -54,9 +80,42 @@ export const Settings = () => {
 
   return (
     <div className="p-4 space-y-6 animate-fadeIn">
-      <h2 className="text-lg font-bold text-light-text dark:text-dark-text">
-        設定
-      </h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-bold text-light-text dark:text-dark-text">
+          設定
+        </h2>
+        {/* 保存ボタン */}
+        <button
+          onClick={handleSave}
+          disabled={!hasChanges}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            saveSuccess
+              ? 'bg-green-500 text-white'
+              : hasChanges
+                ? 'bg-light-accent dark:bg-dark-accent text-white hover:opacity-90'
+                : 'bg-light-bg-sub dark:bg-dark-bg-sub text-light-text-sub dark:text-dark-text-sub cursor-not-allowed'
+          }`}
+        >
+          {saveSuccess ? (
+            <>
+              <Check className="w-4 h-4" />
+              保存しました
+            </>
+          ) : (
+            <>
+              <Save className="w-4 h-4" />
+              保存
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* 未保存の変更がある場合の警告 */}
+      {hasChanges && (
+        <div className="bg-yellow-500/10 border border-yellow-500/30 text-yellow-600 dark:text-yellow-400 px-3 py-2 rounded-lg text-sm">
+          未保存の変更があります。「保存」ボタンを押して設定を保存してください。
+        </div>
+      )}
 
       {/* テキストAI設定 */}
       <section className="bg-light-bg-sub dark:bg-dark-bg-sub rounded-xl p-4 space-y-4">
@@ -70,7 +129,7 @@ export const Settings = () => {
             プロバイダー
           </label>
           <select
-            value={settings.textApiProvider}
+            value={localSettings.textApiProvider}
             onChange={(e) => {
               const provider = e.target.value as TextApiProvider;
               const defaultModel = provider === 'openai'
@@ -78,7 +137,7 @@ export const Settings = () => {
                 : provider === 'anthropic'
                   ? 'claude-sonnet-4-5-20250514'
                   : 'gemini-3-flash';
-              updateSettings({
+              updateLocalSettings({
                 textApiProvider: provider,
                 textModel: defaultModel,
               });
@@ -97,8 +156,8 @@ export const Settings = () => {
             モデル
           </label>
           <select
-            value={settings.textModel}
-            onChange={(e) => updateSettings({ textModel: e.target.value })}
+            value={localSettings.textModel}
+            onChange={(e) => updateLocalSettings({ textModel: e.target.value })}
             className="w-full px-3 py-2 rounded-lg border border-light-text-sub/20 dark:border-dark-text-sub/20 bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text"
           >
             {models.map((model) => (
@@ -117,8 +176,8 @@ export const Settings = () => {
           <div className="relative">
             <input
               type={showTextApiKey ? 'text' : 'password'}
-              value={settings.textApiKey}
-              onChange={(e) => updateSettings({ textApiKey: e.target.value })}
+              value={localSettings.textApiKey}
+              onChange={(e) => updateLocalSettings({ textApiKey: e.target.value })}
               placeholder="sk-..."
               className="w-full px-3 py-2 pr-10 rounded-lg border border-light-text-sub/20 dark:border-dark-text-sub/20 bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text"
             />
@@ -135,9 +194,9 @@ export const Settings = () => {
           </div>
           <a
             href={
-              settings.textApiProvider === 'openai'
+              localSettings.textApiProvider === 'openai'
                 ? 'https://platform.openai.com/api-keys'
-                : settings.textApiProvider === 'anthropic'
+                : localSettings.textApiProvider === 'anthropic'
                   ? 'https://console.anthropic.com/'
                   : 'https://aistudio.google.com/apikey'
             }
@@ -162,8 +221,8 @@ export const Settings = () => {
             プロバイダー
           </label>
           <select
-            value={settings.imageApiProvider}
-            onChange={(e) => updateSettings({ imageApiProvider: e.target.value as ImageApiProvider })}
+            value={localSettings.imageApiProvider}
+            onChange={(e) => updateLocalSettings({ imageApiProvider: e.target.value as ImageApiProvider })}
             className="w-full px-3 py-2 rounded-lg border border-light-text-sub/20 dark:border-dark-text-sub/20 bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text"
           >
             <option value="gemini">Google Gemini（推奨）</option>
@@ -173,14 +232,14 @@ export const Settings = () => {
         </div>
 
         {/* Gemini画像モデル選択 */}
-        {settings.imageApiProvider === 'gemini' && (
+        {localSettings.imageApiProvider === 'gemini' && (
           <div>
             <label className="block text-sm text-light-text-sub dark:text-dark-text-sub mb-1">
               画像モデル
             </label>
             <select
-              value={settings.geminiImageModel}
-              onChange={(e) => updateSettings({ geminiImageModel: e.target.value as GeminiImageModel })}
+              value={localSettings.geminiImageModel}
+              onChange={(e) => updateLocalSettings({ geminiImageModel: e.target.value as GeminiImageModel })}
               className="w-full px-3 py-2 rounded-lg border border-light-text-sub/20 dark:border-dark-text-sub/20 bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text"
             >
               {GEMINI_IMAGE_MODELS.map((model) => (
@@ -196,14 +255,14 @@ export const Settings = () => {
         )}
 
         {/* OpenAI画像モデル選択 */}
-        {settings.imageApiProvider === 'openai' && (
+        {localSettings.imageApiProvider === 'openai' && (
           <div>
             <label className="block text-sm text-light-text-sub dark:text-dark-text-sub mb-1">
               画像モデル
             </label>
             <select
-              value={settings.openaiImageModel}
-              onChange={(e) => updateSettings({ openaiImageModel: e.target.value as OpenAIImageModel })}
+              value={localSettings.openaiImageModel}
+              onChange={(e) => updateLocalSettings({ openaiImageModel: e.target.value as OpenAIImageModel })}
               className="w-full px-3 py-2 rounded-lg border border-light-text-sub/20 dark:border-dark-text-sub/20 bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text"
             >
               {OPENAI_IMAGE_MODELS.map((model) => (
@@ -226,9 +285,9 @@ export const Settings = () => {
           <div className="relative">
             <input
               type={showImageApiKey ? 'text' : 'password'}
-              value={settings.imageApiKey}
-              onChange={(e) => updateSettings({ imageApiKey: e.target.value })}
-              placeholder={settings.imageApiProvider === 'gemini' ? 'AIza...' : 'sk-...'}
+              value={localSettings.imageApiKey}
+              onChange={(e) => updateLocalSettings({ imageApiKey: e.target.value })}
+              placeholder={localSettings.imageApiProvider === 'gemini' ? 'AIza...' : 'sk-...'}
               className="w-full px-3 py-2 pr-10 rounded-lg border border-light-text-sub/20 dark:border-dark-text-sub/20 bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text"
             />
             <button
@@ -244,9 +303,9 @@ export const Settings = () => {
           </div>
           <a
             href={
-              settings.imageApiProvider === 'gemini'
+              localSettings.imageApiProvider === 'gemini'
                 ? 'https://aistudio.google.com/apikey'
-                : settings.imageApiProvider === 'openai'
+                : localSettings.imageApiProvider === 'openai'
                   ? 'https://platform.openai.com/api-keys'
                   : 'https://platform.stability.ai/'
             }
@@ -268,9 +327,9 @@ export const Settings = () => {
           {(['light', 'dark', 'system'] as ThemeMode[]).map((theme) => (
             <button
               key={theme}
-              onClick={() => updateSettings({ theme })}
+              onClick={() => updateLocalSettings({ theme })}
               className={`flex-1 px-3 py-2 rounded-lg text-sm transition-colors ${
-                settings.theme === theme
+                localSettings.theme === theme
                   ? 'bg-light-accent dark:bg-dark-accent text-white'
                   : 'bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text'
               }`}
@@ -322,6 +381,7 @@ export const Settings = () => {
       {/* アプリ情報 */}
       <section className="text-center text-sm text-light-text-sub dark:text-dark-text-sub">
         <p>{APP_INFO.name} v{APP_INFO.version}</p>
+        <p className="text-xs mt-1">設定はChromeのローカルストレージに保存されます</p>
       </section>
 
       {/* 削除確認モーダル */}

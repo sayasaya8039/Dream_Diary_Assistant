@@ -24,3 +24,6 @@ Thumbs.db
 # 一時ファイル
 *.tmp
 *.temp
+
+# note記事（GitHubにアップロードしない）
+articles/
